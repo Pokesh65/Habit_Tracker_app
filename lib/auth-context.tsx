@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Alert } from "react-native";
 import { ID, Models } from "react-native-appwrite";
+import Toast from "react-native-toast-message";
 import { account } from "./appwrite";
 
 type AuthContextType = {
@@ -30,7 +30,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         } catch (error) {
             if (error instanceof Error) {
-                Alert.alert("Error", `${error.message}!`)
+                //     Toast.show({ type: "error", text1: error.message })
+                Toast.show({ type: "error", text1: error.message })
+
             }
             setUser(null)
         } finally {
@@ -42,14 +44,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             const response = await account.create(ID.unique(), email, password)
             if (response.status) {
-                Alert.alert("Success", "User created successfully!");
+                Toast.show({ type: "success", text1: "User created successfully!" })
             }
             await signIn(email, password)
             return null
         } catch (error) {
             if (error instanceof Error) {
                 // await AsyncStorage.setItem("isAuth", "true"); // <-- IMPORTANT
-                Alert.alert("Error", `${error.message}!`);
+                Toast.show({ type: "error", text1: error.message })
                 return error.message
             }
             return "An error occured during singUp"
@@ -62,12 +64,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const session = await account.get()
             setUser(session)
             if (session.status) {
-                Alert.alert("Success", "User logged in successfully!")
+                Toast.show({ type: "success", text1: "User logged in successfully!" })
             }
             return null
         } catch (error) {
             if (error instanceof Error) {
-                Alert.alert("Error", `${error.message}!`);
+                Toast.show({ type: "error", text1: error.message });
                 return error.message
             }
             return "An error occured during singIn"
@@ -81,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         } catch (error) {
             if (error instanceof Error) {
-                Alert.alert("Error", `${error.message}!`)
+                Toast.show({ type: "error", text1: error.message })
             }
             setUser(null)
         }

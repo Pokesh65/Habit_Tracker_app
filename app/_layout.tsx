@@ -56,6 +56,7 @@ import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD3DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 // Custom theme matching your purple dark aesthetic
 const theme = {
@@ -111,6 +112,7 @@ export default function RootLayout() {
           </SafeAreaProvider>
         </PaperProvider>
       </AuthProvider>
+      <Toast topOffset={60} />
     </GestureHandlerRootView>
   );
 }

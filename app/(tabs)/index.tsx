@@ -361,25 +361,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  // ── Card ────────────────────────────────────────────
-  // card: {
-  //   marginBottom: 14,
-  //   borderRadius: 20,
-  //   backgroundColor: "rgba(255,255,255,0.07)",
-  //   borderWidth: 1,
-  //   shadowColor: "#7c3aed",
-  //   borderColor: "#a78bfa",
-  //   shadowOffset: { width: 0, height: 4 },
-  //   shadowOpacity: 0.15,
-  //   shadowRadius: 16,
-  //   elevation: 6,
-  //   overflow: "hidden",
-  // },
-
-  // cardCompleted: {
-  //   opacity: 0.5,
-  //   borderColor: "#a78bfa",
-  // },
 
   card: {
     marginBottom: 14,

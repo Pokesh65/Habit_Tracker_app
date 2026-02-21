@@ -1,8 +1,8 @@
 import { useAuth } from "@/lib/auth-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
     Dimensions,
     KeyboardAvoidingView,
     Linking,
@@ -11,8 +11,7 @@ import {
     StyleSheet, View
 } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
-
-import { LinearGradient } from "expo-linear-gradient";
+import Toast from "react-native-toast-message";
 const { height } = Dimensions.get("window");
 
 export default function AuthScreen() {
@@ -60,7 +59,9 @@ export default function AuthScreen() {
 
             // router.replace("/"); // go to tabs after login
         } catch (error) {
-            Alert.alert("Error", "Login failed");
+            if (error instanceof Error) {
+                Toast.show({ type: "error", text1: error.message })
+            }
         }
     };
 
