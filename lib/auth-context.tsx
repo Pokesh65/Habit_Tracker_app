@@ -8,7 +8,8 @@ type AuthContextType = {
     isLocadingUser: boolean;
     signUp: (email: string, password: string) => Promise<string | null>;
     signIn: (email: string, password: string) => Promise<string | null>;
-    signOut: () => Promise<void>
+    signOut: () => Promise<void>;
+    resetPassword: (email: string) => Promise<string | null>;
 }
 
 
@@ -89,9 +90,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const resetPassword = async (email: string) => {
+        try {
+            await account.createRecovery(
+                email,
+                "https://your-app-deep-link/reset-password"  // ← redirect URL after clicking email link
+            );
+            Toast.show({
+                type: "success",
+                text1: "Recovery email sent!",
+                text2: "Check your inbox to reset your password.",
+            });
+            return null;
+        } catch (error) {
+            if (error instanceof Error) {
+                Toast.show({ type: "error", text1: error.message });
+                return error.message;
+            }
+            return "An error occurred";
+        }
+    };
+
+
+
     return (
         <AuthContext.Provider
-            value={{ isLocadingUser, user, signUp, signIn, signOut }}
+            value={{ isLocadingUser, user, signUp, signIn, signOut, resetPassword }}
         >
             {children}
         </AuthContext.Provider >

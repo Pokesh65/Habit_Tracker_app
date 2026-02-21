@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { ID } from "react-native-appwrite";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 const FREQUENCIES = ["daily", "weekly", "monthly"]
 type Frequency = (typeof FREQUENCIES)[number];
@@ -58,6 +59,12 @@ export default function AddHabitScreen() {
                     last_completed: new Date().toISOString(),
                 }
             )
+            Toast.show({
+                type: "success",
+                text1: "🎉 New habit added!",
+                text2: "Congrats! You got a new habit on your routine.",
+            });
+
             router.back()
 
         } catch (error) {

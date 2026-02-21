@@ -8,7 +8,9 @@ import {
     Linking,
     Platform,
     Pressable,
-    StyleSheet, View
+    StyleSheet,
+    TouchableOpacity,
+    View
 } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -22,8 +24,11 @@ export default function AuthScreen() {
     const [error, setError] = useState<string | null>("")
     const router = useRouter()
 
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [recoveryEmail, setRecoveryEmail] = useState("");
+
     const theme = useTheme()
-    const { signIn, signUp } = useAuth();
+    const { signIn, signUp, resetPassword } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
 
 
@@ -68,6 +73,14 @@ export default function AuthScreen() {
     const handleSwithMode = () => {
         setIsSignUp((prev) => !prev)
     }
+
+    const handleResetPassword = async () => {
+        if (!recoveryEmail) return;
+        await resetPassword(recoveryEmail);
+        setShowForgotPassword(false);
+        setRecoveryEmail("");
+    };
+
 
     return (
         <LinearGradient
@@ -165,6 +178,17 @@ export default function AuthScreen() {
                         </Text>
                     )}
 
+                    {/* {!isSignUp && (
+                        <Pressable
+                            onPress={() => setShowForgotPassword(true)}
+                            style={{ alignSelf: "center", marginBottom: 14, marginTop: -8 }}
+                        >
+                            <Text style={{ color: "#a78bfa", fontSize: 13, fontWeight: "600" }}>
+                                Forgot Password?
+                            </Text>
+                        </Pressable>
+                    )} */}
+
                     {/* Primary CTA */}
                     <Button
                         onPress={handleAuth}
@@ -202,6 +226,60 @@ export default function AuthScreen() {
                     </View>
                 </View>
             </KeyboardAvoidingView>
+
+
+            {showForgotPassword && (
+                <View style={styles.forgotOverlay}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalIconWrapper}>
+                            <Text style={{ fontSize: 24 }}>🔑</Text>
+                        </View>
+                        <Text style={styles.modalTitle}>Reset Password</Text>
+                        <Text style={styles.modalMessage}>
+                            Enter your email and we'll send you a recovery link.
+                        </Text>
+                        <TextInput
+                            label="Email"
+                            value={recoveryEmail}
+                            onChangeText={setRecoveryEmail}
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            mode="flat"
+                            style={styles.modalInput}
+                            underlineColor="transparent"
+                            activeUnderlineColor="#a78bfa"
+                            textColor="#fff"
+                            left={<TextInput.Icon icon="email-outline" color="rgba(255,255,255,0.35)" />}
+                            theme={{
+                                colors: {
+                                    onSurfaceVariant: "rgba(255,255,255,0.4)",
+                                    primary: "#a78bfa",
+                                },
+                            }}
+                        />
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => {
+                                    setShowForgotPassword(false);
+                                    setRecoveryEmail("");
+                                }}
+                            >
+                                <Text style={styles.cancelText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.sendButton, !recoveryEmail && styles.sendButtonDisabled]}
+                                onPress={handleResetPassword}
+                                disabled={!recoveryEmail}
+                            >
+                                <Text style={styles.sendText}>Send Link</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            )}
+
+
         </LinearGradient>
     )
 }
@@ -379,5 +457,110 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         textDecorationLine: "underline",
         textDecorationColor: "#a78bfa",
+    },
+
+
+    // modal continer 
+    forgotOverlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.75)",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 24,
+        zIndex: 999,
+        elevation: 999,
+    },
+    modalContainer: {
+        width: "100%",
+        backgroundColor: "#1a1535",        // ← solid dark purple
+        borderRadius: 24,
+        padding: 24,
+        borderWidth: 1,
+        borderColor: "rgba(167,139,250,0.25)",
+        shadowColor: "#7c3aed",
+        shadowOffset: { width: 0, height: 20 },
+        shadowOpacity: 0.4,
+        shadowRadius: 40,
+        elevation: 1000,
+        alignItems: "center",
+        zIndex: 1000,
+    },
+    modalIconWrapper: {
+        width: 60,
+        height: 60,
+        borderRadius: 18,
+        backgroundColor: "rgba(124,58,237,0.15)",
+        borderWidth: 1,
+        borderColor: "rgba(124,58,237,0.3)",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 16,
+    },
+    modalTitle: {
+        fontSize: 22,
+        fontWeight: "800",
+        color: "#ffffff",
+        marginBottom: 8,
+        letterSpacing: -0.3,
+    },
+    modalMessage: {
+        fontSize: 14,
+        color: "rgba(255,255,255,0.45)",
+        marginBottom: 24,
+        textAlign: "center",
+        lineHeight: 22,
+    },
+    modalInput: {
+        backgroundColor: "#120e2e",
+        borderRadius: 12,
+        width: "100%",
+        marginBottom: 24,
+        overflow: "hidden",
+    },
+    modalButtons: {
+        flexDirection: "row",
+        gap: 12,
+        width: "100%",
+    },
+    cancelButton: {
+        flex: 1,
+        paddingVertical: 14,
+        borderRadius: 14,
+        backgroundColor: "rgba(255,255,255,0.07)",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.1)",
+        alignItems: "center",
+    },
+    cancelText: {
+        color: "rgba(255,255,255,0.6)",
+        fontWeight: "600",
+        fontSize: 15,
+    },
+    sendButton: {
+        flex: 1,
+        paddingVertical: 14,
+        borderRadius: 14,
+        backgroundColor: "#7c3aed",
+        alignItems: "center",
+        justifyContent: "center",
+        shadowColor: "#7c3aed",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 12,
+        elevation: 8,
+    },
+    sendButtonDisabled: {
+        backgroundColor: "#3b2070",   // ← dimmed when email empty
+        shadowOpacity: 0,
+        elevation: 0,
+    },
+    sendText: {
+        color: "#fff",
+        fontWeight: "700",
+        fontSize: 15,
     },
 });

@@ -7,6 +7,7 @@ import { Modal, ScrollView, StyleSheet, TouchableOpacity, View } from "react-nat
 import { ID, Query } from "react-native-appwrite";
 import { Swipeable } from "react-native-gesture-handler";
 import { Surface, Text } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 export default function Index() {
   const { user, signOut } = useAuth()
@@ -143,25 +144,52 @@ export default function Index() {
     setDeleteModalVisible(true)
   }
 
-
   const confirmDeleteHabit = async () => {
-    if (!habitToDelete) return
+    if (!habitToDelete) return;
 
     try {
+      // Delete the habit
       await databases.deleteDocument(
         DATABASE_ID,
         HABITS_COLLECTION_ID,
         habitToDelete
-      )
+      );
 
-      SwipeableRef.current[habitToDelete]?.close()
+      // Find all completions with this habit_id
+      const completions = await databases.listDocuments(
+        DATABASE_ID,
+        HABIT_COMPLETION_COLLECTION_ID,
+        [
+          Query.equal("habit_id", habitToDelete),
+          Query.equal("user_id", user?.$id ?? "")
+        ]
+      );
+
+      console.log("completions :", completions)
+
+
+      // Delete each completion individually
+      await Promise.all(
+        completions.documents.map((doc) =>
+          databases.deleteDocument(
+            DATABASE_ID,
+            HABIT_COMPLETION_COLLECTION_ID,
+            doc.$id
+          )
+        )
+      );
+
+      SwipeableRef.current[habitToDelete]?.close();
+      Toast.show({ type: "success", text1: "Habit deleted successfully." });
     } catch (error) {
-      console.error("Error deleting habit:", error)
+      console.error("Error deleting habit:", error);
+      Toast.show({ type: "error", text1: "Failed to delete habit." });
     } finally {
-      setDeleteModalVisible(false)
-      setHabitToDelete(null)
+      setDeleteModalVisible(false);
+      setHabitToDelete(null);
     }
-  }
+  };
+
   const handleCompleteHabit = async (id: string) => {
     if (!user || completedHabits?.includes(id)) return;
     try {
