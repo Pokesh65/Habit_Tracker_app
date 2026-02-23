@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Pocket_Tracker",
+    "name": "PocketTracker",
     "slug": "Pocket_Tracker",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/moon.png",
+    "icon": "./assets/images/logo_pk.png",
     "scheme": "practicesession",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.pokesh_kumar.Pocket_Tracker"
+      "package": "com.pokeshKumar.PocketTracker"
     },
     "web": {
       "output": "static",
@@ -31,8 +31,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/logo_pk.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
